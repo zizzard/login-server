@@ -1,0 +1,21 @@
+<html>  
+	<head>
+		<meta charset="utf-8">
+		<title>Reset</title>
+		<style type="text/css">
+			.error{
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Reset Password</h1>
+		<form action='/updatePassword' method='GET'>
+		  <label>Username</label><input type='text' name='username' value=<%=username%> />
+		  <label>New Password</label><input type='password' name='password'/>
+		  <label>Reset Token</label><input type='text' name='token'/>
+		  <input type='submit'/>
+		</form>
+		<div class="error"><%=errorText%></div>
+	<body>
+</html>  
