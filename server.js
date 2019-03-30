@@ -58,6 +58,7 @@ app.get('/signup', function(req, res){
 		addUser(username, hash, password);
 		var success = "Created user: " + username;
 		res.render("login", {
+			username: username,
 			successText: success
 		});
 	}
@@ -94,32 +95,41 @@ app.get('/reset', function(req, res){
 
 app.get('/updatePassword', function(req, res){
 	var username = req.query.username;
-	var resetToken = req.query.resetToken;
+	var resetToken = req.query.token;
 	var password = req.query.password;
+	var hash = saltedMd5(password, salt);
 
 	var result = db.get('resets')
-	  .find({ username: username, key: resetToken })
+	  .find({ username: username })
 	  .value()
 
-	console.log(result)
+	var dbToken = undefined
+	if(result !== undefined){
+		dbToken = result.key
+	}
 
-	if(result === undefined){
+	console.log(dbToken);
+	console.log(resetToken);
+
+	if(result === undefined || dbToken !== resetToken){
 		var error = "The provided reset token is invalid"
 		res.render('reset',{
 			errorText: error,
 			username: username
 		});
 	}else{
+		var success = "Updated password for " + username;
 		db.get('users')
 		  .find({ username: username })
-		  .assign({ password: password })
+		  .assign({ password: hash })
 		  .write()
 
 		db.get('resets')
 		  .remove({ username: username, key: resetToken })
 		  .write()
 		res.render('login', {
-			successText: username
+			username: username,
+			successText: success
 		});
 	}
 });
