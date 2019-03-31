@@ -158,26 +158,37 @@ function addUser(name, hash) {
 	  .write();
 }
 
-//TODO: Send email to email, with the username and resetToken in the body
-function sendResetEmail(email, username, resetToken){
-
-}
-
-//TODO: Add the encrypted password the database
 function addEncrpytedPassword(password){
 	//TODO: Finish the below line
-	var encryptedPass = "" + password; 
+	var encryptedPass = encrpyt(password);
 
 	db.get('hiddenPasswords')
 	  .push({ password: encryptedPass })
 	  .write();
 }
 
-//TODO: Decrypt and save the used passwords
 function decryptPasswords(){
 	var passwords = db.get('hiddenPasswords')
+	  .map('password')
 	  .value()
 
-	console.log(passwords);
-	//TODO: Decrypt and save the passwords
+	passwords.forEach(function(password) {
+		var decryptPass = decrypt(password);
+		console.log(decryptPass)
+	});
+}
+
+//TODO: Encrpyt the password
+function encrypt(password){
+
+}
+
+//TODO: Decrypt the password
+function decrypt(password){
+	
+}
+
+//TODO: Send email to email, with the username and resetToken in the body
+function sendResetEmail(email, username, resetToken){
+
 }
