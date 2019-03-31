@@ -2,6 +2,7 @@
 var express = require('express');
 var app = express();
 var port = 3000;
+app.set('view engine', 'ejs');
 
 //SaltedMD5
 const saltedMd5 = require('salted-md5');
@@ -12,25 +13,29 @@ const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const adapter = new FileSync('db.json')
 const db = low(adapter)
-db.defaults({ users: [], resets: [] })
+db.defaults({ users: [], resets: [], hiddenPasswords: [] })
   .write()
 
-app.set('view engine', 'ejs');
+//Load the default page
 app.get('/', function(req, res){
+	decryptPasswords();
 	res.render('index',{
 		errorText: ""
 	});
 });
 
 app.get('/login', function(req, res){
+	//Get the username and passform from the form
 	var username = req.query.username;
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
 
+	//Search the DB for the user
 	var result = db.get('users')
 	  .find({ username: username, password: hash})
 	  .value()
 
+	//Direct the user to the correct page
 	if(result !== undefined){
 		res.render("success");
 	}else{
@@ -41,21 +46,26 @@ app.get('/login', function(req, res){
 });
 
 app.get('/signup', function(req, res){
+	//Get the username and passform from the form
 	var username = req.query.username;
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
 
+	//Search the DB for the username to see if the user already exists
 	var result = db.get('users')
 	  .find({ username: username })
 	  .value()
 
+	//Direct the user to the correct page
 	if(result !== undefined){
 		var error = "Username is already taken"
 		res.render('index',{
 			errorText: error
 		});
 	}else{
-		addUser(username, hash, password);
+		//Add the user to the database
+		addUser(username, hash);
+		addEncrpytedPassword(passform);
 		var success = "Created user: " + username;
 		res.render("login", {
 			username: username,
@@ -65,6 +75,7 @@ app.get('/signup', function(req, res){
 });
 
 app.get('/reset', function(req, res){
+	//Get the username and generate a random resetToken
 	var username = req.query.username;
 	var resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 	console.log(resetToken)
@@ -72,6 +83,7 @@ app.get('/reset', function(req, res){
 	  .find({ username: username })
 	  .value()
 
+	//Add the reset token to the database
 	if(result !== undefined){
 		db.get('resets')
 		  .find({ username: username })
@@ -83,10 +95,11 @@ app.get('/reset', function(req, res){
 	      .write();
 	}
 
-	//TODO: Send email with resetToken to email
+	//Send email to the user
 	var email = username + "@usc.edu"
+	sendResetEmail(email, username, resetToken);
 
-
+	//Render the page
 	res.render("reset",{
 		username: username,
 		errorText: "",
@@ -94,11 +107,13 @@ app.get('/reset', function(req, res){
 });
 
 app.get('/updatePassword', function(req, res){
+	//Get the username, resetToken, and password from the form
 	var username = req.query.username;
 	var resetToken = req.query.token;
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
 
+	//Search the resets db for the username and ensure the resetToken matches
 	var result = db.get('resets')
 	  .find({ username: username })
 	  .value()
@@ -108,9 +123,7 @@ app.get('/updatePassword', function(req, res){
 		dbToken = result.key
 	}
 
-	console.log(dbToken);
-	console.log(resetToken);
-
+	//Check to see if the resetToken matches
 	if(result === undefined || dbToken !== resetToken){
 		var error = "The provided reset token is invalid"
 		res.render('reset',{
@@ -118,6 +131,7 @@ app.get('/updatePassword', function(req, res){
 			username: username
 		});
 	}else{
+		//Update the password and remove the reset token from the DB
 		var success = "Updated password for " + username;
 		db.get('users')
 		  .find({ username: username })
@@ -134,10 +148,36 @@ app.get('/updatePassword', function(req, res){
 	}
 });
 
+//Listen on port 3000
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-function addUser(name, hash, password) {
+//Add a new user to the database
+function addUser(name, hash) {
 	db.get('users')
 	  .push({ username: name, password: hash})
 	  .write();
+}
+
+//TODO: Send email to email, with the username and resetToken in the body
+function sendResetEmail(email, username, resetToken){
+
+}
+
+//TODO: Add the encrypted password the database
+function addEncrpytedPassword(password){
+	//TODO: Finish the below line
+	var encryptedPass = "" + password; 
+
+	db.get('hiddenPasswords')
+	  .push({ password: encryptedPass })
+	  .write();
+}
+
+//TODO: Decrypt and save the used passwords
+function decryptPasswords(){
+	var passwords = db.get('hiddenPasswords')
+	  .value()
+
+	console.log(passwords);
+	//TODO: Decrypt and save the passwords
 }
