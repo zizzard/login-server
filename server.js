@@ -25,7 +25,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/login', function(req, res){
-	//Get the username and passform from the form
+	//Get the username and password from the form
 	var username = req.query.username;
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
@@ -46,7 +46,7 @@ app.get('/login', function(req, res){
 });
 
 app.get('/signup', function(req, res){
-	//Get the username and passform from the form
+	//Get the username and password from the form
 	var username = req.query.username;
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
@@ -65,7 +65,7 @@ app.get('/signup', function(req, res){
 	}else{
 		//Add the user to the database
 		addUser(username, hash);
-		addEncrpytedPassword(passform);
+		addEncrpytedPassword(password);
 		var success = "Created user: " + username;
 		res.render("login", {
 			username: username,

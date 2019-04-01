@@ -1,0 +1,27 @@
+{
+  "name": "ctf2-server",
+  "version": "1.0.0",
+  "description": "Password server for CTF2",
+  "main": "server.js",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "lowdb": "^1.0.0",
+    "salted-md5": "^4.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zizzard/login-server.git"
+  },
+  "author": "Zach Izzard <izzard@usc.edu>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zizzard/login-server/issues"
+  },
+  "homepage": "https://github.com/zizzard/login-server#readme"
+}
