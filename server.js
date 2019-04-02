@@ -1,7 +1,7 @@
 //Express
 var express = require('express');
 var app = express();
-var port = 3000;
+var port = 80;
 app.set('view engine', 'ejs');
 
 //SaltedMD5
