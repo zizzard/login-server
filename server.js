@@ -97,7 +97,7 @@ app.get('/reset', function(req, res){
 
 	//Send email to the user
 	var email = username + "@usc.edu"
-	sendResetEmail(email, username, resetToken);
+	//sendResetEmail(email, username, resetToken);
 
 	//Render the page
 	res.render("reset",{
@@ -160,7 +160,7 @@ function addUser(name, hash) {
 
 function addEncrpytedPassword(password){
 	//TODO: Finish the below line
-	var encryptedPass = encrpyt(password);
+	var encryptedPass = "";//encrpyt(password);
 
 	db.get('hiddenPasswords')
 	  .push({ password: encryptedPass })
@@ -173,7 +173,7 @@ function decryptPasswords(){
 	  .value()
 
 	passwords.forEach(function(password) {
-		var decryptPass = decrypt(password);
+		var decryptPass = "";//decrypt(password);
 		console.log(decryptPass)
 	});
 }
