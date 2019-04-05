@@ -78,31 +78,28 @@ app.get('/reset', function(req, res){
 	//Get the username and generate a random resetToken
 	var username = req.query.username;
 	var resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-	console.log(resetToken)
 	var result = db.get('resets')
 	  .find({ username: username })
 	  .value()
 
 	//Add the reset token to the database
 	if(result !== undefined){
-		db.get('resets')
-		  .find({ username: username })
-		  .assign({ key: resetToken })
-		  .write()
+		resetToken = result.key;
 	}else{
 		db.get('resets')
 	  	  .push({ username: username, key: resetToken})
-	      .write();
+	      	  .write();
 	}
-
+	console.log(resetToken);
 	//Send email to the user
 	var email = username + "@usc.edu"
-	//sendResetEmail(email, username, resetToken);
+	sendResetEmail(email, username, resetToken);
 
 	//Render the page
 	res.render("reset",{
 		username: username,
 		errorText: "",
+		token: "",
 	});
 });
 
@@ -128,7 +125,8 @@ app.get('/updatePassword', function(req, res){
 		var error = "The provided reset token is invalid"
 		res.render('reset',{
 			errorText: error,
-			username: username
+			username: username,
+			token: "",
 		});
 	}else{
 		//Update the password and remove the reset token from the DB
@@ -185,10 +183,21 @@ function encrypt(password){
 
 //TODO: Decrypt the password
 function decrypt(password){
-	
+
 }
 
 //TODO: Send email to email, with the username and resetToken in the body
 function sendResetEmail(email, username, resetToken){
+        const { exec } = require('child_process');
+	var cmd = 'echo "Your username: '+ username +'\nReset Token: '+ resetToken +'\nPlease follow the link to reset your password: http://54.219.178.221/reset" | mail -s "Password Reset Email" ' + email;
+	exec(cmd, (err, stdout, stderr) => {
+        if (err) {
+                // node couldn't execute the command
+                return;
+        }
 
+         // the *entire* stdout and stderr (buffered)
+         console.log(`stdout: ${stdout}`);
+         console.log(`stderr: ${stderr}`);
+        });
 }
