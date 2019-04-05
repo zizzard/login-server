@@ -10,12 +10,69 @@
 	</head>
 	<body>
 		<h1>Reset Password</h1>
-		<form action='/updatePassword' method='GET'>
+
+		<script type="text/javascript">
+			document.getElementById("resetForm").onsubmit = function() {
+			    return isValidForm();
+			};
+		</script>
+
+		<form action='/updatePassword' method='GET' id="resetForm" onsubmit="return isValidForm()">
 		  <label>Username</label><input type='text' name='username' value=<%=username%> />
-		  <label>New Password</label><input type='password' name='password'/>
-		  <label>Reset Token</label><input type='text' name='token'/>
+		  <label>New Password<span id="pwNotice"></span></label><input id="pw" type='password' name='password'/>
+		  <label>Reset Token</label><input id='tokenInput' type='text' name='token'/>
 		  <input type='submit'/>
+		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(except"@#$%^&")</p>
 		</form>
 		<div class="error"><%=errorText%></div>
 	<body>
+
+	<script type="text/javascript">
+		var pwInput = document.getElementById("pw")
+		var pw = pwInput.value
+		var pwStrength = 0
+		var pwNotice = document.getElementById("pwNotice")
+
+		var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+		var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+
+		pwInput.oninput = function() {
+			pw = pwInput.value
+
+			if(pwInput != "") {
+				if(strongRegex.test(pw)) {
+                	pwNotice.innerHTML = " strong"
+                	pwNotice.style.color = "green"
+                	pwStrength = 2;
+                } else if(mediumRegex.test(pw)) {
+                	pwNotice.innerHTML = " medium"
+                	pwNotice.style.color = "orange"
+                	pwStrength = 1;
+                }
+                else {
+                	pwNotice.innerHTML = " weak"
+                	pwNotice.style.color = "red"
+                	pwStrength = 0;
+                }
+			} else {
+				pwNotice.innerHTML = ""
+			}
+		}
+
+		function isValidForm() {
+			console.log('pwStrength: ' + pwStrength)
+			if(pwStrength==0) {
+				alert("Password too weak!")
+				return false;
+			} else if(document.getElementById('tokenInput').value == "") {
+				alert("token can't be empty")
+				return false;
+			}
+
+			else {
+				return true;
+			}
+		}
+	</script>
 </html>  
