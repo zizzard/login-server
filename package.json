@@ -7,6 +7,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "lowdb": "^1.0.0",
+    "npm": "^6.9.0",
     "salted-md5": "^4.0.2"
   },
   "devDependencies": {},
