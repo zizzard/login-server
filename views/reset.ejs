@@ -22,7 +22,8 @@
 		  <label>New Password<span id="pwNotice"></span></label><input id="pw" type='password' name='password'/>
 		  <label>Reset Token</label><input id='tokenInput' type='text' name='token'/>
 		  <input type='submit'/>
-		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(except"@#$%^&")</p>
+		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(including"@#$%^&")</p>
+		  <p>(Recommended format: "ac#1234@BD")</p>
 		</form>
 		<div class="error"><%=errorText%></div>
 	<body>
