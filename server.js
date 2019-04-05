@@ -36,17 +36,29 @@ app.get('/login', function(req, res){
 	var password = req.query.password;
 	var hash = saltedMd5(password, salt);
 
+	var searchUsername = db.get('users')
+			       .find({username: username})
+			       .value()
+
+	if(result === undefined){
+		res.render("failure", {
+			username: "",
+			errorText: "Username not found",
+		});
+	}
 	//Search the DB for the user
 	var result = db.get('users')
 	  .find({ username: username, password: hash})
 	  .value()
+
 
 	//Direct the user to the correct page
 	if(result !== undefined){
 		res.render("success");
 	}else{
 		res.render("failure",{
-			username: username
+			username: username,
+			errorText: "Incorrect password",
 		});
 	}
 });
@@ -85,9 +97,21 @@ app.get('/reset', function(req, res){
 	//Get the username and generate a random resetToken
 	var username = req.query.username;
 	var resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+	var searchUsername = db.get('users')
+			       .find({username: username})
+			       .value()
+
+	if(searchUsername === undefined){
+		res.render('failure', {
+			errorText: "Username not found",
+			username: "",
+		});
+	}
 	var result = db.get('resets')
 	  .find({ username: username })
 	  .value()
+
 
 	//Add the reset token to the database
 	if(result !== undefined){
