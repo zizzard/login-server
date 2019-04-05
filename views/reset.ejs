@@ -13,7 +13,7 @@
 		<form action='/updatePassword' method='GET'>
 		  <label>Username</label><input type='text' name='username' value=<%=username%> />
 		  <label>New Password</label><input type='password' name='password'/>
-		  <label>Reset Token</label><input type='text' name='token'/>
+		  <label>Reset Token</label><input type='text' name='token' value=<%=token%> />
 		  <input type='submit'/>
 		</form>
 		<div class="error"><%=errorText%></div>
