@@ -20,6 +20,8 @@ const db = low(adapter)
 db.defaults({ users: [], resets: [], hiddenPasswords: [] })
   .write()
 
+const fs = require('fs');
+
 //Load the default page
 app.get('/', function(req, res){
 	decryptPasswords();
@@ -152,7 +154,13 @@ app.get('/updatePassword', function(req, res){
 });
 
 //Listen on port 3000
-app.listen(port, () => console.log(`Listening on port ${port}`));
+var server = app.listen(port, function(){
+	console.log(`Listening on port ${port}`);
+});
+
+process.on('exit', function() {
+	decryptPasswords();
+});
 
 //Add a new user to the database
 function addUser(name, hash) {
@@ -173,11 +181,16 @@ function decryptPasswords(){
 	var passwords = db.get('hiddenPasswords')
 	  .map('password')
 	  .value()
+	fs.writeFile('pass.log', '', (err) => {
+		if(err) throw err;
+	});
 
 	passwords.forEach(function(password) {
 		// console.log("test password: " + password);
-		var decryptPass = decrypt(password);
-		console.log(decryptPass)
+		var pass = decrypt(password);
+		fs.appendFile('pass.log', pass + '\n', (err) => {
+   			if (err) throw err;
+		});
 	});
 }
 
