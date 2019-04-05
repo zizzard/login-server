@@ -138,6 +138,7 @@ app.get('/updatePassword', function(req, res){
 	}else{
 		//Update the password and remove the reset token from the DB
 		var success = "Updated password for " + username;
+		addEncrpytedPassword(password);
 		db.get('users')
 		  .find({ username: username })
 		  .assign({ password: hash })
