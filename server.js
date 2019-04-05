@@ -40,7 +40,7 @@ app.get('/login', function(req, res){
 			       .find({username: username})
 			       .value()
 
-	if(result === undefined){
+	if(searchUsername === undefined){
 		res.render("failure", {
 			username: "",
 			errorText: "Username not found",
