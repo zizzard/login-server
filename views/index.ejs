@@ -12,9 +12,9 @@
 		<h1>Login</h1>
 
 		<script type="text/javascript">
-			document.getElementById("myform").onsubmit = function() {
-			    return isValidForm();
-			};
+			// document.getElementById("myform").onsubmit = function() {
+			//     return isValidForm();
+			// };
 		</script>
 
 		<form action='/login' method='GET'>
@@ -24,11 +24,10 @@
 		</form>
 		<h1>Sign Up</h1>
 		<form action='/signup' method='GET' id="myform" onsubmit="return isValidForm()">
-		  <label>Username</label><input type='text' name='username'/>
+		  <label>Username</label><input id="usrInput" type='text' name='username'/>
 		  <label>Password<span id="pwNotice"></span></label><input id="pw" type='password' name='password'/>
 		  <input type='submit'/>
-		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(except"@#$%^&")</p>
-
+		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(including"@#$%^&")</p>
 		  <div class="error">
 		  	<%= errorText %>
 		  </div>
@@ -38,7 +37,9 @@
 		<script type="text/javascript">
 
 			var pwInput = document.getElementById("pw")
+			var usrInput = document.getElementById("usrInput")
 			var pw = pwInput.value
+			var usr = usrInput.value;
 			var pwNotice = document.getElementById("pwNotice")
 			var pwStrength = 0
 
@@ -58,6 +59,10 @@
                     	pwNotice.innerHTML = " medium"
                     	pwStrength = 1
                     	pwNotice.style.color = "orange"
+                    } else if(pw.match(usr)) {
+                    	pwNotice.innerHTML = " weak, don't include username in password"
+                    	pwStrength = 0
+                    	pwNotice.style.color = "red"
                     }
                     else {
                     	pwNotice.innerHTML = " weak"
@@ -67,6 +72,11 @@
 				} else {
 					pwNotice.innerHTML = ""
 				}
+			}
+
+			usrInput.oninput = function() {
+				console.log(usrInput.value)
+				usr = usrInput.value
 			}
 
 			function isValidForm() {

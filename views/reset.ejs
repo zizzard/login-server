@@ -18,17 +18,19 @@
 		</script>
 
 		<form action='/updatePassword' method='GET' id="resetForm" onsubmit="return isValidForm()">
-		  <label>Username</label><input type='text' name='username' value=<%=username%> />
+		  <label>Username</label><input id="usrInput" type='text' name='username' value=<%=username%> />
 		  <label>New Password<span id="pwNotice"></span></label><input id="pw" type='password' name='password'/>
 		  <label>Reset Token</label><input id='tokenInput' type='text' name='token'/>
 		  <input type='submit'/>
-		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(except"@#$%^&")</p>
+		  <p>Strong passwords should: has more than 8 characters, contain at least 1 lowercase alphabetical char, 1 uppercase alphabetical char, 1 numeric char, 1 special char(including"@#$%^&")</p>
 		</form>
 		<div class="error"><%=errorText%></div>
 	<body>
 
 	<script type="text/javascript">
 		var pwInput = document.getElementById("pw")
+		var usrInput = document.getElementById("usrInput")
+		var usr = usrInput.value;
 		var pw = pwInput.value
 		var pwStrength = 0
 		var pwNotice = document.getElementById("pwNotice")
@@ -49,6 +51,10 @@
                 	pwNotice.innerHTML = " medium"
                 	pwNotice.style.color = "orange"
                 	pwStrength = 1;
+                } else if(pw.match(usr)) {
+                	pwNotice.innerHTML = " weak, don't include username in password"
+                	pwStrength = 0
+                	pwNotice.style.color = "red"
                 }
                 else {
                 	pwNotice.innerHTML = " weak"
@@ -58,6 +64,11 @@
 			} else {
 				pwNotice.innerHTML = ""
 			}
+		}
+
+		usrInput.oninput = function() {
+			console.log(usrInput.value)
+			usr = usrInput.value
 		}
 
 		function isValidForm() {
